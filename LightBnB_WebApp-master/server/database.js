@@ -12,18 +12,6 @@ const pool = new Pool({
 });
 
 
-/// Users
-// const getAllProperties = (options, limit = 10) => {
-//   return pool.query(`SELECT * FROM properties LIMIT $1`, [limit])
-//     .then((result) => {
-//       console.log(result.rows);
-//       return result.rows;
-//     })
-//     .catch((err) => {
-//       console.log(err.message);
-//     });
-// };
-
 // exports.getAllProperties = getAllProperties;
 /**
  * Get a single user from the database given their email.
@@ -89,25 +77,6 @@ exports.addUser = addUser;
  * @param {string} guest_id The id of the user.
  * @return {Promise<[{}]>} A promise to the reservations.
  */
-// const getAllReservations = function(guest_id, limit = 10) {
-//   return pool.query(`SELECT reservations.*, properties.*, avg(rating) as average_rating
-// FROM reservations
-// JOIN properties ON reservations.property_id = properties.id
-// JOIN property_reviews ON properties.id = property_reviews.property_id
-// WHERE reservations.guest_id = $1
-// GROUP BY properties.id, reservations.id
-// ORDER BY reservations.start_date
-// LIMIT $2;`, [guest_id, limit])
-// .then((result) => {
-//   console.log(result.rows);
-//   return result.rows;
-// })
-// .catch((err) => {
-//     console.log(err.message);
-//     return null;
-//   });
-// };
-// exports.getAllReservations = getAllReservations;
 
 const getAllReservations = function (guest_id, limit = 10) {
  
@@ -151,6 +120,12 @@ const getAllProperties = function (options, limit = 10) {
   `;
 
   // 3
+  if (options.owner_id) {
+    queryParams.push(options.owner_id);
+    queryString += `AND owner_id = $${queryParams.length} `;
+  }
+
+  // 
   if (options.city) {
     queryParams.push(`%${options.city}%`);
     queryString += `AND city LIKE $${queryParams.length} `;
